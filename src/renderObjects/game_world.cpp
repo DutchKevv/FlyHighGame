@@ -58,6 +58,7 @@ int GameWorld::init() {
     // load textures
     // -----------------------
     ResourceManager::LoadTexture("assets/textures/grass.jpg", GL_FALSE, "grass");
+    ResourceManager::LoadTexture("assets/textures/grass.png", GL_TRUE, "grass2");
     ResourceManager::LoadTexture("assets/textures/boulder.jpg", GL_FALSE, "rock");
 
     // load renderObjects
@@ -132,12 +133,12 @@ int GameWorld::init() {
     worldShader.SetInteger("diffuseTexture", 0);
     worldShader.SetInteger("shadowMap", 1);
 
-    //    worldShader.SetVector3f("light.direction", -20.2f, -10.0f, -10.3f);
+//    worldShader.SetVector3f("light.direction", -20.2f, -10.0f, -10.3f);
 //    worldShader.SetVector3f("viewPos", context->camera->Position);
 //
-//    worldShader.SetVector3f("light.ambient", 0.7, 0.7, 0.7);
-//    worldShader.SetVector3f("light.diffuse", 0.5, 0.5, 0.5);
-//    worldShader.SetVector3f("light.specular", 0.7, 0.7, 0.7);
+    worldShader.SetVector3f("light.ambient", 0.7, 0.7, 0.7);
+    worldShader.SetVector3f("light.diffuse", 0.5, 0.5, 0.5);
+    worldShader.SetVector3f("light.specular", 0.7, 0.7, 0.7);
     worldShader.SetFloat("material.shininess", 0.5f);
 
     depthQuadShader.Use();
@@ -199,8 +200,8 @@ int GameWorld::draw() {
     glm::mat4 lightProjection, lightView;
     glm::mat4 lightSpaceMatrix;
     float near_plane = 1.0f, far_plane = 7.5f;
-    lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane);
-//    lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+//    lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane);
+    lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
     lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
     lightSpaceMatrix = lightProjection * lightView;
 
@@ -215,7 +216,7 @@ int GameWorld::draw() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    glm::mat4 projection = glm::perspective(context->camera->Zoom, (float) context->windowW / (float) context->windowH, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(context->camera->Zoom, (float) context->windowW  / (float) context->windowH, 0.1f, 1000.0f);
     glm::mat4 view = context->camera->GetViewMatrix();
 
     worldShader.Use();
@@ -236,20 +237,11 @@ int GameWorld::draw() {
     // Render scene as normal
     this->renderScene(worldShader, false);
 
-//    depthQuadShader.Use();
-//    depthQuadShader.SetFloat("near_plane", near_plane);
-//    depthQuadShader.SetFloat("far_plane", far_plane);
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, depthMap);
-
     if (this->skybox)
         this->skybox->renderScene(worldShader, false);
 
     if (this->hud)
         this->hud->renderScene(worldShader, false);
-
-//    if (this->player)
-//        this->player->renderScene(worldShader, false);
 
     return 0;
 }
@@ -270,7 +262,7 @@ int GameWorld::renderScene(Shader &shader, bool isShadowRender) {
     glm::mat4 model;
     shader.SetMatrix4("model", model);
     glBindVertexArray(planeVAO);
-    ResourceManager::GetTexture("grass").Bind();
+    ResourceManager::GetTexture("grass2").Bind();
     glDrawArrays(GL_TRIANGLES, 0, 6);
     //    glCullFace(GL_BACK);
 
