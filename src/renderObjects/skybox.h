@@ -10,11 +10,13 @@ class SkyBox : public BaseRenderObj {
 public:
     SkyBox();
 
-    int init(Context &context);
+    int init();
 
     int update();
 
     int draw();
+
+    int renderScene(Shader &shader, bool isShaderRender);
 
     int destroy();
 

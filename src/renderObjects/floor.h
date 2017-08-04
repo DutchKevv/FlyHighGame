@@ -10,11 +10,13 @@ class Floor : public BaseRenderObj {
 public:
     Floor();
 
-    int init(Context &context);
+    int init();
 
     int update();
 
     int draw();
+
+    int renderScene(Shader &shader, bool isShadowRender);
 
     int destroy();
 private:

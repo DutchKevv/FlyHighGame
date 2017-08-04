@@ -4,12 +4,13 @@
 
 #include <iostream>
 #include <cmath>
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "engine/shader.h"
+#include <engine/shader.h>
+#include <engine/context.h>
 #include "../extern/stb_image.cpp"
 #include "skybox.h"
 #include <fstream>
@@ -83,8 +84,8 @@ SkyBox::SkyBox() : BaseRenderObj() {
 
 }
 
-int SkyBox::init(Context &context) {
-    BaseRenderObj::init(context);
+int SkyBox::init() {
+    BaseRenderObj::init();
 
     ResourceManager::LoadShader("assets/shaders/skybox.v.glsl", "assets/shaders/skybox.f.glsl", NULL, "skybox");
 
@@ -101,15 +102,20 @@ int SkyBox::init(Context &context) {
     vector<std::string> faces
             {
 
-                    "assets/textures/skybox/3/right.jpg",
-                    "assets/textures/skybox/3/left.jpg",
-                    "assets/textures/skybox/3/top.jpg",
-                    "assets/textures/skybox/3/bottom.jpg",
-                    "assets/textures/skybox/3/back.jpg",
-                    "assets/textures/skybox/3/front.jpg",
+                    "assets/textures/skybox/4/jajlands1_rt.jpg",
+                    "assets/textures/skybox/4/jajlands1_lf.jpg",
+                    "assets/textures/skybox/4/jajlands1_up.jpg",
+                    "assets/textures/skybox/4/jajlands1_dn.jpg",
+                    "assets/textures/skybox/4/jajlands1_bk.jpg",
+                    "assets/textures/skybox/4/jajlands1_ft.jpg"
             };
 
-
+//    "assets/textures/skybox/3/right.jpg",
+//            "assets/textures/skybox/3/left.jpg",
+//            "assets/textures/skybox/3/top.jpg",
+//            "assets/textures/skybox/3/bottom.jpg",
+//            "assets/textures/skybox/3/back.jpg",
+//            "assets/textures/skybox/3/front.jpg",
     cubemapTexture = loadCubemap(faces);
 
     return 0;
@@ -119,26 +125,27 @@ int SkyBox::update() {
     return 0;
 }
 
-int SkyBox::draw() {
-    BaseRenderObj::draw();
+int SkyBox::renderScene(Shader &shader, bool isShadowRender) {
+    BaseRenderObj::renderScene(shader, isShadowRender);
 
-    Shader shader = ResourceManager::GetShader("skybox");
-    shader.Use();
+
+    Shader skyBoxShader = ResourceManager::GetShader("skybox");
+    skyBoxShader.Use();
 
 ////    glm::mat4 model;
-//    glm::mat4 view = context.camera->GetViewMatrix();
-    glm::mat4 projection = glm::perspective(context.camera->Zoom, (float)context.windowW / (float)context.windowH, 0.1f, 1.0f);
+//    glm::mat4 view = context->camera->GetViewMatrix();
+    glm::mat4 projection = glm::perspective(context->camera->Zoom, (float)context->windowW / (float)context->windowH, 0.1f, 1.0f);
 ////    shader->setMat4("model", model);
 //    shader->setMat4("view", view);
 //    shader->setMat4("projection", projection);
-//    shader->setVec3("cameraPos", context.camera->Position);
+//    shader->setVec3("cameraPos", context->camera->Position);
 
     // draw skybox as last
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 
-    glm::mat4 view = glm::mat4(glm::mat3(context.camera->GetViewMatrix())); // remove translation from the view matrix
-    shader.SetMatrix4("view", view);
-    shader.SetMatrix4("projection", projection);
+    glm::mat4 view = glm::mat4(glm::mat3(context->camera->GetViewMatrix())); // remove translation from the view matrix
+    skyBoxShader.SetMatrix4("view", view);
+    skyBoxShader.SetMatrix4("projection", projection);
 
     // skybox cube
     glBindVertexArray(VAO);
@@ -147,6 +154,12 @@ int SkyBox::draw() {
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
     glDepthFunc(GL_LESS); // set depth function back to default
+}
+
+int SkyBox::draw() {
+    BaseRenderObj::draw();
+
+
 
     return 0;
 };

@@ -4,17 +4,17 @@
 
 #pragma once
 
-#include <engine/context.h>
-
 class Hud : public BaseRenderObj {
 public:
     Hud();
 
-    int init(Context &context);
+    int init();
 
     int update();
 
     int draw();
+
+    int renderScene(Shader &shader, bool isShadowRender);
 
     int destroy();
 private:

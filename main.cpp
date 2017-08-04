@@ -8,26 +8,35 @@
 #include "src/renderObjects/skybox.h"
 #include "src/renderObjects/floor.h"
 #include "src/renderObjects/hud.h"
-
-Engine *engine;
+#include "src/renderObjects/player.h"
+#include "src/renderObjects/world.h"
 
 int main() {
 
-    engine = new Engine();
+    Engine engine(ENGINE_TYPE_GAME);
 
+
+    World *world = new World();
     SkyBox *skybox = new SkyBox();
     Floor *floor = new Floor();
     Hud *hud = new Hud();
+    Player *player = new Player();
 
-    Camera *camera = new Camera(glm::vec3(0.0f, 0.2f, 3.0f));
+    Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
-    engine->renderer->attachCamera(camera);
-    engine->renderer->attachRenderObj(skybox);
-    engine->renderer->attachRenderObj(floor);
-//
-//    // Hud should always go as last
-    engine->renderer->attachRenderObj(hud);
-    engine->renderer->startLoop();
+    engine.renderer->initShadowMap();
+    engine.renderer->initSpriteHandler();
 
+    // Camera, HUD, SkyBox, Player
+    engine.renderer->attachCamera(camera);
+    engine.renderer->attachPlayer(player);
+//    engine.renderer->attachSkybox(skybox);
+    engine.renderer->attachHud(hud);
 
+    /// Objects
+
+    engine.renderer->attachRenderObj(world);
+//    engine.renderer->attachRenderObj(floor);
+
+    engine.renderer->startLoop();
 }

@@ -6,6 +6,8 @@
 #include <engine/baseRenderObj.h>
 #include <engine/texture.h>
 #include <engine/resourceManager.h>
+#include <engine/renderer.h>
+#include <engine/context.h>
 #include "hud.h"
 
 unsigned int VAO, VBO;
@@ -16,19 +18,17 @@ static float vertices[] = {
         1.5f,  1.5f, 1.0f, 1.0f,
 
         1.5f,  1.5f, 1.0f, 1.0f,
-
         -1.5f,  1.5f,  0.0f, 1.0f,
         -1.5f, -1.5f, 0.0f, 0.0f
 };
 
 Hud::Hud() : BaseRenderObj() {}
 
-int Hud::init(Context &context) {
-    BaseRenderObj::init(context);
+int Hud::init() {
+    BaseRenderObj::init();
 
     Shader shader = ResourceManager::LoadShader("assets/shaders/hud.v.glsl", "assets/shaders/hud.f.glsl", NULL, "hud");
-
-    ResourceManager::LoadTexture("assets/textures/boulder.jpg", GL_FALSE, "hud");
+    ResourceManager::LoadTexture("assets/textures/compass.png", GL_TRUE, "hud");
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -60,32 +60,35 @@ int Hud::update() {
 
 int Hud::draw() {
     BaseRenderObj::draw();
+//
+//    float h = context->windowH * 0.2;
+//
+//    glDisable(GL_DEPTH_TEST);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glEnable(GL_BLEND);
+//
+//    context->renderer->sprite->draw(ResourceManager::GetTexture("hud"), glm::vec2(0, context->windowH - h), glm::vec2(h, h), 0.0f);
+//
+//    glEnable(GL_DEPTH_TEST);
+//    glDisable(GL_BLEND);
+    return 0;
+}
 
-    ResourceManager::GetShader("hud").Use();
+int Hud::renderScene(Shader &shader, bool isShadowRender) {
+    BaseRenderObj::renderScene(shader, isShadowRender);
 
-    int w = context.windowW * 2;
-    int h = context.windowH * 0.3;
+    float h = context->windowH * 0.2;
 
     glDisable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
-    glEnable(GL_SCISSOR_TEST);
-    glViewport(0, 0, w, h);
-    glScissor(0, 0, w, h);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, ResourceManager::GetTexture("hud").ID);
+    Texture2D text = ResourceManager::GetTexture("hud");
 
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    context->renderer->sprite->draw(text, glm::vec2(0, context->windowH - h), glm::vec2(h, h), 0.0f);
 
-    glDisable(GL_SCISSOR_TEST);
-    glDisable(GL_BLEND);
-    glViewport(0, 0, context.windowW * 2, context.windowH * 2);
-    glBindVertexArray(0);
-    glActiveTexture(GL_TEXTURE0);
     glEnable(GL_DEPTH_TEST);
-
+    glDisable(GL_BLEND);
     return 0;
 }
 

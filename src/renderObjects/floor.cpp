@@ -7,6 +7,7 @@
 #include <engine/shader.h>
 #include <engine/texture.h>
 #include <engine/resourceManager.h>
+#include <engine/context.h>
 
 static unsigned int VBO, VAO;
 
@@ -24,11 +25,11 @@ Floor::Floor() : BaseRenderObj() {
 
 }
 
-int Floor::init(Context &context) {
-    BaseRenderObj::init(context);
+int Floor::init() {
+    BaseRenderObj::init();
 
     /* FLOOR */
-    ResourceManager::LoadShader("assets/shaders/triangle.v.glsl", "assets/shaders/triangle.f.glsl", NULL, "triangle");
+//    ResourceManager::LoadShader("assets/shaders/light.v.glsl", "assets/shaders/light.f.glsl", NULL, "triangle");
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -52,7 +53,7 @@ int Floor::init(Context &context) {
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
-    ResourceManager::LoadTexture("assets/textures/grass.jpg", GL_FALSE, "grass");
+//    ResourceManager::LoadTexture("assets/textures/grass.jpg", GL_FALSE, "grass");
 
     return 0;
 }
@@ -62,44 +63,49 @@ int Floor::update() {
 }
 
 int Floor::draw() {
-    BaseRenderObj::draw();
-
-    Shader shader = ResourceManager::GetShader("triangle");
-    ResourceManager::GetTexture("grass").Bind();
-
-    shader.Use();
-
-    glBindVertexArray(VAO);
+//    BaseRenderObj::draw();
+//
+//    Shader shader = ResourceManager::GetShader("world");
+//    shader.Use();
+//
+//    ResourceManager::GetTexture("grass").Bind();
+//
+//    glBindVertexArray(VAO);
+//
+////    glCullFace(GL_FRONT);
+////    glEnable(GL_CULL_FACE);
+//
+//    // create transformations
+//    glm::mat4 model;
+//
+//    // camera/view transformation
+////    shader.SetMatrix4("projection", projection);
+////    shader.SetMatrix4("view", view);
+//    shader.SetMatrix4("model", model);
+//
+//    glDrawArrays(GL_TRIANGLES, 0, 6);
+//
+//    glBindVertexArray(0);
 //    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, ResourceManager::GetTexture("grass").ID);
-
-    glCullFace(GL_FRONT);
-    glEnable(GL_CULL_FACE);
-
-    // create transformations
-    glm::mat4 model;
-    glm::mat4 view;
-    glm::mat4 projection;
-    glm::mat4 trans;
-
-    // model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-    view = glm::lookAt(context.camera->Position, context.camera->Position + context.camera->Front, context.camera->Up);
-//    view = glm::mat4(glm::mat3(context.camera->GetViewMatrix()));
-    projection = glm::perspective(glm::radians(45.0f), (float)context.windowW / (float)context.windowH, 0.1f, 100.0f);
-
-    // camera/view transformation
-    shader.SetMatrix4("projection", projection);
-    shader.SetMatrix4("view", view);
-    shader.SetMatrix4("model", model);
-
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    glBindVertexArray(0);
-    glActiveTexture(GL_TEXTURE0);
-    glDisable(GL_CULL_FACE);
+//    glDisable(GL_CULL_FACE);
 
     return 0;
 };
+
+int Floor::renderScene(Shader &shader, bool isShadowRender) {
+    BaseRenderObj::renderScene(shader, isShadowRender);
+
+//    ResourceManager::GetTexture("grass").Bind();
+
+    glBindVertexArray(VAO);
+    glActiveTexture(GL_TEXTURE1); // active proper texture unit before binding
+
+    glm::mat4 model;
+    shader.SetMatrix4("model", model);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+//    glActiveTexture(GL_TEXTURE0);
+}
 
 int Floor::destroy() {
     // Cleanup VBO
