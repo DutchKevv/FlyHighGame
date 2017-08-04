@@ -105,6 +105,8 @@ int Floor::renderScene(Shader &shader, bool isShadowRender) {
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 //    glActiveTexture(GL_TEXTURE0);
+
+    return 0;
 }
 
 int Floor::destroy() {

@@ -43,20 +43,20 @@ int Player::update() {
         yM -= 0.001f;
     }
 
-    position.x += speed * sinf(xRadius);
-
-    if (yM != 0)
-        position.y += yM * cosf(xRadius);
-
-    position.z += speed * cosf(xRadius);
-
-    if (position.y <= 0.1f) {
-        yM = 0;
-        position.y = 0.1f;
-        isAirborne = false;
-    } else {
-        isAirborne = true;
-    }
+//    position.x += speed * sinf(xRadius);
+//
+//    if (yM != 0)
+//        position.y += yM * cosf(xRadius);
+//
+//    position.z += speed * cosf(xRadius);
+//
+//    if (position.y <= 0.1f) {
+//        yM = 0;
+//        position.y = 0.1f;
+//        isAirborne = false;
+//    } else {
+//        isAirborne = true;
+//    }
 
     if (glfwGetKey(context->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(context->window, true);
@@ -155,5 +155,7 @@ int Player::processKeyboard(Camera_Movement direction, float velocity) {
         default:
             break;
     }
+
+    return 0;
 }
 

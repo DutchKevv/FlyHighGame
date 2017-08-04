@@ -154,6 +154,8 @@ int SkyBox::renderScene(Shader &shader, bool isShadowRender) {
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
     glDepthFunc(GL_LESS); // set depth function back to default
+
+    return 0;
 }
 
 int SkyBox::draw() {

@@ -6,10 +6,11 @@
 
 
 #include <engine/baseRenderObj.h>
+#include <engine/world.h>
 
-class World : public BaseRenderObj {
+class GameWorld : public World {
 public:
-    World();
+    GameWorld();
 
     int init();
 
@@ -18,6 +19,8 @@ public:
     int draw();
 
     int renderScene(Shader &shader, bool isShadowRender);
+
+    int renderShadowScene();
 
     int destroy();
 private:
