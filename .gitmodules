@@ -1,0 +1,6 @@
+[submodule "engine"]
+	path = engine
+	url = git@github.com:DutchKevv/Engine.git
+[submodule "extern/engine"]
+	path = extern/engine
+	url = git@github.com:DutchKevv/Engine.git

@@ -7,9 +7,9 @@
 #include <engine/context.h>
 #include <engine/baseRenderObj.h>
 #include <engine/camera.h>
-#include "src/renderObjects/skybox.h"
-#include "src/renderObjects/hud.h"
-#include "src/renderObjects/player.h"
+#include "skybox.h"
+#include "hud.h"
+#include "player.h"
 #include <algorithm>
 #include <vector>
 
@@ -48,6 +48,15 @@ GameWorld::GameWorld() : World() {
 }
 
 int GameWorld::init() {
+
+    // Enable depth test
+    glEnable(GL_DEPTH_TEST);
+
+    // Accept fragment if it closer to the camera than the former one
+    glDepthFunc(GL_LESS);
+
+    // Cull triangles which normal is not towards the camera
+    glEnable(GL_CULL_FACE);
 
     // load shader
     // -----------------------
